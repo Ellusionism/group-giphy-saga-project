@@ -20,6 +20,21 @@ app.use(express.static('build'));
 app.use('/api/favorite', favoriteRouter);
 app.use('/api/category', categoryRouter);
 
+app.get('/search', (req, res) => {
+  // Here is where we will ask the Giphy API
+  // for data:
+  let searchTerm = req.params 
+  axios({
+    method: 'GET',
+    url: `https://api.giphy.com/v1/gifs/search?api_key=${giphy_api_key}&q=${searchTerm}`
+  }).then((response) => {
+    res.send(response.data);
+  }).catch((error) => {
+    console.log('GET /gifs fail:', error);
+    res.sendStatus(500);
+  })
+})
+
 // Listen
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
