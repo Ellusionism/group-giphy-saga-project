@@ -42,6 +42,26 @@ function* fetchLikes() {
   }
 }
 
+function* addToLikes(action) {
+  try {
+    let gif = action.payload;
+    console.log(gif);
+    const response = axios({
+      method: "POST",
+      url: '/api/favorite',
+      data: {
+        url: gif.url,
+        title: gif.title
+      }
+    })
+    yield put({
+      type: 'UPDATE_LIKES',
+    })
+  } catch (error) {
+    console.error('Error in addToLikes (index.js):', error);
+  }
+}
+
 //get category list from database
 function* fetchCategory (){
      try {
@@ -63,6 +83,7 @@ function* rootSaga(){
   yield takeEvery('SAGA/FETCH_RESULTS', fetchResults);
   yield takeEvery('SAGA/FETCH_LIKES', fetchLikes);
   yield takeEvery('SAGA/FETCH_CATEGORY', fetchCategory);
+  yield takeEvery('SAGA/ADD_TO_LIKES', addToLikes);
 }
 
 //create sagaMiddleware
@@ -92,6 +113,10 @@ const likeList = (state = [], action) => {
   switch (action.type) {
     case "SET_LIKES":
       return action.payload;
+      break;
+    case 'UPDATE_LIKES':
+      return [...state, action.payload];
+      break;
     default:
       return state;
   }
