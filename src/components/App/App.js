@@ -8,7 +8,15 @@ function App(props) {
   return (
     <Router>
       <div>
-        <Route exact path = '/search'>
+        <nav>
+          <button>
+            <Link to = '/'>Search</Link>
+          </button>
+          <button>
+            <Link to = '/favorites'>Favorites</Link>
+          </button>
+        </nav>
+        <Route exact path = '/'>
           <Search />
         </Route>
         <Route exact path = '/favorites'>
