@@ -2,6 +2,7 @@ import React from 'react';
 import { HashRouter as Router, Route, Link } from 'react-router-dom'
 
 import Search from './Search/Search.jsx';
+import LikeList from '../LikeList/LikeList.jsx';
 
 function App(props) {
   return (
