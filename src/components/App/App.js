@@ -1,13 +1,20 @@
 import React from 'react';
+import { HashRouter as Router, Route, Link } from 'react-router-dom'
 
 import Search from './Search/Search.jsx';
 
 function App(props) {
   return (
-    <div>
-      <h1>Giphy Search!</h1>
-      <Search />
-    </div>
+    <Router>
+      <div>
+        <Route exact path = '/search'>
+          <Search />
+        </Route>
+        <Route exact path = '/favorites'>
+          <LikeList />
+        </Route>
+      </div>
+    </Router>
   );
 }
 
