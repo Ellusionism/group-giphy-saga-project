@@ -1,5 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const axios = require('axios');
+
+//import api key
+require('dotenv').config();
+const giphy_api_key = process.env.giphy_api_key;
 
 const app = express();
 // App PORT set with production check
@@ -20,10 +25,10 @@ app.use(express.static('build'));
 app.use('/api/favorite', favoriteRouter);
 app.use('/api/category', categoryRouter);
 
-app.get('/search', (req, res) => {
+app.get('/search/:term', (req, res) => {
   // Here is where we will ask the Giphy API
   // for data:
-  let searchTerm = req.params 
+  let searchTerm = req.params.term 
   axios({
     method: 'GET',
     url: `https://api.giphy.com/v1/gifs/search?api_key=${giphy_api_key}&q=${searchTerm}`
