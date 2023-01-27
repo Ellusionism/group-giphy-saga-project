@@ -11,11 +11,11 @@ import App from "./components/App/App";
 //saga generator functions
 
 //get search results from giphy api
-function* fetchResults() {
+function* fetchResults(action) {
   try {
     const response = yield axios({
       method: "GET",
-      url: `/search/:${searchTerms}`, // find a way to insert searchTerm
+      url: `/search/${action.payload}`, // find a way to insert searchTerm
     })
     yield put({
         type: 'SET_RESULTS',
@@ -60,7 +60,7 @@ function* fetchCategory (){
 
 //rootSaga function
 function* rootSaga(){
-  yield takeEvery('SAGA/FETCH_TERM', fetchResults);
+  yield takeEvery('SAGA/FETCH_RESULTS', fetchResults);
   yield takeEvery('SAGA/FETCH_LIKES', fetchLikes);
   yield takeEvery('SAGA/FETCH_CATEGORY', fetchCategory);
 }
