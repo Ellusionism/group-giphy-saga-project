@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 
+import LikeButton from '../../LikeButton/LikeButton.jsx';
 
 function Search () {
     //declare react useState
@@ -48,7 +49,12 @@ function Search () {
                 <div>
                     <h4>You searched for {searchTerm}</h4>
                     {searchResults.map((gif) => {
-                        return <img key={gif.id} src={gif.images.fixed_height.url}/>
+                        return (
+                            <>
+                            <img key={gif.id} src={gif.images.fixed_height.url}/>
+                            <LikeButton gif={gif} />
+                            </>
+                        )
                     })}    
                 </div>   
             </form>
