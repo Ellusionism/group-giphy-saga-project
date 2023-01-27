@@ -8,6 +8,68 @@ import createSagaMiddleware from "redux-saga";
 import { takeEvery, put } from "redux-saga/effects";
 import App from "./components/App/App";
 
+//saga generator functions
+
+//get search results from giphy api
+function* fetchResults() {
+  try {
+    const response = yield axios({
+      method: "GET",
+      url: `/search/:${searchTerms}`, // find a way to insert searchTerm
+    })
+    yield put({
+        type: 'SET_RESULTS',
+        payload: response.data.data
+      })
+  } catch (error) {
+    console.log("fetchResults fail:", error);
+  }
+}
+
+//get liked gifs from database
+function* fetchLikes() {
+  try {
+    const response = yield axios({
+      method: 'GET',
+      url: "/api/favorite",
+    });
+    yield put({
+        type: 'SET_LIKES',
+        payload: response.data
+      })
+  } catch (error) {
+    console.log("fetchLikes fail:", error);
+  }
+}
+
+//get category list from database
+function* fetchCategory (){
+     try {
+        const response = yield axios ({
+            method: 'GET', 
+            url: '/api/category'
+        })
+        yield put({
+            type: 'SET_CATEGORY',
+            payload: response.data
+          })
+     } catch (error) {
+        console.log('fetchCategory fail:', error);
+      }
+}
+
+//rootSaga function
+function* rootSaga(){
+  yield takeEvery('SAGA/FETCH_TERM', fetchResults);
+  yield takeEvery('SAGA/FETCH_LIKES', fetchLikes);
+  yield takeEvery('SAGA/FETCH_CATEGORY', fetchCategory);
+}
+
+//create sagaMiddleware
+const sagaMiddleware = createSagaMiddleware();
+
+//redux reducers
+
 const searchResults = (state = [], action) => {
   switch (action.type) {
     case "SET_RESULTS":
@@ -25,6 +87,7 @@ const searchTerm = (state = "", action) => {
       return state;
   }
 };
+
 const likeList = (state = [], action) => {
   switch (action.type) {
     case "SET_LIKES":
@@ -33,6 +96,7 @@ const likeList = (state = [], action) => {
       return state;
   }
 };
+
 const likeCategory = (state = "", action) => {
   switch (action.type) {
     case "SET_LIKE_CATEGORY":
@@ -41,6 +105,7 @@ const likeCategory = (state = "", action) => {
       return state;
   }
 };
+
 const categoryList = (state = [], action) => {
   switch (action.type) {
     case "SET_CATEGORY":
@@ -50,48 +115,12 @@ const categoryList = (state = [], action) => {
   }
 };
 
-function* fetchResults() {
-  try {
-    const response = yield axios({
-      method: "GET",
-      url: `/search/:${searchTerms}`, // find a way to insert searchTerm
-    })
-    yield put({
-        type: 'SET_RESULTS',
-        payload: response.data.data
-      })
-  } catch (error) {
-    console.log("fetchResults fail:", error);
-  }
-}
-function* fetchLikes() {
-  try {
-    const response = yield axios({
-      method: 'GET',
-      url: "/api/favorite",
-    });
-    yield put({
-        type: 'SET_LIKES',
-        payload: response.data
-      })
-  } catch (error) {
-    console.log("fetchLikes fail:", error);
-  }
-}
+//create reduxStore
+const store = createStore(combineReducers({
+  searchResults, searchTerm, likeList, likeCategory, categoryList
+}), applyMiddleware(sagaMiddleware, logger))
 
-function* fetchCategory (){
-     try {
-        const response = yield axios ({
-            method: 'GET', 
-            url: '/api/category'
-        })
-        yield put({
-            type: 'SET_CATEGORY',
-            payload: response.data
-          })
-     } catch (error) {
-        console.log('fetchCategory fail:', error);
-      }
-}
+//pass rooSaga to middleware
+sagaMiddleware.run(rootSaga);
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<Provider store={store}> <App /> </Provider>, document.getElementById("root"));
